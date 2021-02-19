@@ -1,6 +1,9 @@
 
 package com.digitalinnovation.one.personapi.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.digitalinnovation.one.personapi.dto.request.PersonDTO;
 import com.digitalinnovation.one.personapi.dto.response.MessageResponseDTO;
 import com.digitalinnovation.one.personapi.entity.Person;
@@ -10,17 +13,15 @@ import com.digitalinnovation.one.personapi.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class PersonService {
 
     private PersonRepository personRepository;
 
     private final PersonMapper personMapper = PersonMapper.INSTANCE;    
-
-    @Autowired
-    public PersonService(PersonRepository personRepository) {
-        this.personRepository = personRepository;
-    }
 
     public MessageResponseDTO createPerson(PersonDTO personDTO) {
 
@@ -31,4 +32,12 @@ public class PersonService {
             .message("Created Person with ID " + savedPerson.getId())
             .build();
     }
+
+	public List<PersonDTO> listAll() {
+        List<Person> allPeople = personRepository.findAll();
+        return allPeople.stream()
+                .map(personMapper::toDTO)
+                .collect(Collectors.toList());
+	}
+
 }
