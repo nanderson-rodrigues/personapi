@@ -1,12 +1,15 @@
 
 package com.digitalinnovation.one.personapi.service;
 
+import java.lang.StackWalker.Option;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.digitalinnovation.one.personapi.dto.request.PersonDTO;
 import com.digitalinnovation.one.personapi.dto.response.MessageResponseDTO;
 import com.digitalinnovation.one.personapi.entity.Person;
+import com.digitalinnovation.one.personapi.exceptions.PersonNotFoundException;
 import com.digitalinnovation.one.personapi.mapper.PersonMapper;
 import com.digitalinnovation.one.personapi.repository.PersonRepository;
 
@@ -38,6 +41,13 @@ public class PersonService {
         return allPeople.stream()
                 .map(personMapper::toDTO)
                 .collect(Collectors.toList());
+	}
+
+	public PersonDTO findById(Long id) throws PersonNotFoundException {
+        Person person = personRepository.findById(id)
+                        .orElseThrow(() -> new PersonNotFoundException(id));
+
+        return personMapper.toDTO(person);
 	}
 
 }
